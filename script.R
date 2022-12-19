@@ -92,6 +92,6 @@ ggplot(data = dados2, aes(x = Ano))+
         color = "Culturas") +
   theme(axis.text.x=element_text(angle=60, hjust=1))
 
-  
+  # teste do commit
 
 
