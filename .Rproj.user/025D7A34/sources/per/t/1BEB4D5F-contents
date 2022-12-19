@@ -1,0 +1,83 @@
+library(readxl)
+# Banco de dados utlizados
+dados <- read_xlsx('/home/thiago/Dropbox/postagem_medium/culturas_santamaria/culturaSM.xlsx') #culturas permanentes 
+dados1 <- read_xlsx('/home/thiago/Dropbox/postagem_medium/culturas_santamaria/culturasRotativas.xlsx') #culturas rotativas
+dados2 <- read_xlsx('/home/thiago/Dropbox/postagem_medium/culturas_santamaria/culturas_rotativas_Soja_Arroz.xlsx') # Soja e arroz
+
+# alterando os nomes 
+#'''names(dados) = c('Uva', 'Tungue', 'Tangerina', 'Pêssego', 'Pêra', 'Palmito', 'Noz', 'Marmelo',
+#                'Maracujá', 'Manga', 'Mamão', 'Maça', 'Limão', 'Laranja', 'Goiaba', 'Figo',
+#                 'Erva Mate', 'Caqui', 'Banana', 'Azeitona', 'Abacate')'''
+
+library(ggplot2) # https://ggplot2-book.org/index.html
+
+#Gráfico culturas permanentes
+ggplot(data = dados,aes(x = Cultura, y = Quantidade))+
+  geom_bar(stat="identity",  fill = "steelblue") +
+  geom_text(aes(label=Quantidade), vjust = -0.2) +
+  ggtitle("Culturas Permanentes e Produção em toneladas - Ano 2020") +
+  theme(plot.title = element_text(hjust = 0.5, size = 13))
+
+#  dificuldades encontradas - stat, o geom_text (valores no topo das barras)
+
+# Gráfico culturas rotativas
+ggplot(data = dados1,aes(x = Cultura, y = Quantidade))   +
+  geom_bar(stat="identity",  fill = "steelblue") +
+  geom_text(aes(label=Quantidade), vjust = -0.2) +
+  ggtitle("Culturas Rotativas e Produção em toneladas - 2020") +
+  theme(plot.title = element_text(hjust = 0.5, size = 13))
+
+# Filtro para as culturas rotativas 
+
+library(dplyr)
+
+filtro_dados1 <- dados1 |> 
+  filter(Quantidade >= 437)
+
+# Gráfico do filtro
+ggplot(data = filtro_dados1, aes(x = Cultura, y = Quantidade))   +
+  geom_bar(stat="identity",  fill = "steelblue") +
+  geom_text(aes(label=Quantidade), vjust = -0.2) +
+  ggtitle("Culturas Rotativas e Produção em toneladas") +
+  theme(plot.title = element_text(hjust = 0.5, size = 13))
+
+#  Gráfico da serie temporal de soja e arroz
+
+p1 <- ggplot(data = dados2, aes(x = Ano, y = Arroz)) +
+  geom_line()
+
+p1
+
+p2 <- ggplot(data = dados2, aes(x = Ano, y = Soja)) +
+  geom_line()
+p2
+p3 <- p1 + p2 
+
+# verificar https://statisticsglobe.com/draw-multiple-time-series-in-same-plot-in-r
+
+# blbiotexa para juntar as variáveis arroz e soja
+install.packages("reshape2")     
+library("reshape2") 
+
+graf_temp <- melt(dados2, id.vars = 'Ano')
+head(graf_temp)
+
+
+ggplot(graf_temp,                            # Draw ggplot2 time series plot
+         aes(x = Ano,
+             y = value,
+             col = variable)) +
+    geom_line()
+ 
+
+ggplot(data = dados2, aes(x = Ano))+
+  geom_line(aes(y = Arroz, color  = "Arroz")) +
+  geom_line(aes(y = Soja, color = "Soja")) + 
+  labs (title = "Produção de Arroz e Soja no anos de 1974 a 2020",
+        x = "Anos",
+        y = "Quantidade (t)",
+        color = "Culturas") 
+
+  
+
+
