@@ -1,1 +1,1 @@
-para mais informações entrar em contotato via e-mail.
+para mais informações entrar em contato via e-mail.
